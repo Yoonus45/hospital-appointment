@@ -1,25 +1,24 @@
-const cors = require('cors');
-app.use(cors());
+// Load environment variables
 require('dotenv').config();
+
 // Import dependencies
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
-require('dotenv').config(); // 👈 Needed to load .env in Render
+const cors = require('cors');
 
 // Create Express app
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware to parse form data
+// Enable CORS for frontend (e.g. Netlify)
+app.use(cors());
+
+// Middleware to parse form data and JSON
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// CORS to allow frontend (Netlify) to call this backend
-const cors = require('cors');
-app.use(cors());
-
-// Serve static files (only needed if hosting frontend from backend)
+// Serve static files (optional if using Netlify for frontend)
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Connect to MongoDB Atlas using .env variable
@@ -32,7 +31,7 @@ mongoose.connect(process.env.MONGO_URI, {
   console.error('❌ MongoDB connection failed:', err);
 });
 
-// Mongoose schema/model
+// Define Mongoose schema and model
 const contactSchema = new mongoose.Schema({
   name: String,
   email: String,
@@ -41,21 +40,22 @@ const contactSchema = new mongoose.Schema({
 
 const Contact = mongoose.model('Contact', contactSchema);
 
-// Route: Home test (for Render check)
+// Route: Home (test purpose)
 app.get('/', (req, res) => {
   res.send('🎉 Backend is working!');
 });
 
-// Route: Handle form submission
+// Route: Handle form submissions
 app.post('/contact', async (req, res) => {
   try {
     console.log("📩 Data received from frontend:", req.body);
+
     const { name, email, phone } = req.body;
-
     const newContact = new Contact({ name, email, phone });
-    const savedContact = await newContact.save();
 
+    const savedContact = await newContact.save();
     console.log("✅ Saved to database:", savedContact);
+
     res.status(200).json({ message: 'Thank you! Your data was saved.' });
   } catch (err) {
     console.error('❌ Error saving data:', err);
@@ -65,5 +65,5 @@ app.post('/contact', async (req, res) => {
 
 // Start the server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
