@@ -1,3 +1,4 @@
+console.log("Wil try to save:", {name, email, phone });
 // Load environment variables
 require('dotenv').config();
 
@@ -48,20 +49,20 @@ app.get('/', (req, res) => {
 // Route: Handle form submissions
 app.post('/contact', async (req, res) => {
   try {
-    console.log("📩 Data received from frontend:", req.body);
-
     const { name, email, phone } = req.body;
+    console.log("📩 Received:", { name, email, phone });
+
     const newContact = new Contact({ name, email, phone });
+    const saved = await newContact.save();
 
-    const savedContact = await newContact.save();
-    console.log("✅ Saved to database:", savedContact);
-
+    console.log("✅ Saved to DB:", saved);
     res.status(200).json({ message: 'Thank you! Your data was saved.' });
   } catch (err) {
-    console.error('❌ Error saving data:', err);
+    console.error('❌ Error saving data:', err.message);
     res.status(500).json({ error: 'Something went wrong!' });
   }
 });
+
 
 // Start the server
 app.listen(PORT, () => {
