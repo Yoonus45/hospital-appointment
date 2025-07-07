@@ -1,4 +1,5 @@
-console.log("Wil try to save:", {name, email, phone });
+const { name, email, phone } = req.body;
+
 // Load environment variables
 require('dotenv').config();
 
@@ -50,7 +51,8 @@ app.get('/', (req, res) => {
 app.post('/contact', async (req, res) => {
   try {
     const { name, email, phone } = req.body;
-    console.log("📩 Received:", { name, email, phone });
+
+    console.log("Will try to save:", { name, email, phone });
 
     const newContact = new Contact({ name, email, phone });
     const saved = await newContact.save();
@@ -62,6 +64,7 @@ app.post('/contact', async (req, res) => {
     res.status(500).json({ error: 'Something went wrong!' });
   }
 });
+
 
 
 // Start the server
