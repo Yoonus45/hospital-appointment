@@ -1,3 +1,5 @@
+const cors = require('cors');
+app.use(cors());
 require('dotenv').config();
 // Import dependencies
 const express = require('express');
