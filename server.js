@@ -1,6 +1,3 @@
-const { name, email, phone } = req.body;
-
-// Load environment variables
 require('dotenv').config();
 
 // Import dependencies
@@ -20,7 +17,7 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Serve static files (optional if using Netlify for frontend)
+// Serve static files (optional)
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Connect to MongoDB Atlas using .env variable
@@ -37,22 +34,21 @@ mongoose.connect(process.env.MONGO_URI, {
 const contactSchema = new mongoose.Schema({
   name: String,
   email: String,
-  phone: String
+  message: String  
 });
 
 const Contact = mongoose.model('Contact', contactSchema);
 
-// Route: Home (test purpose)
+// Test route
 app.get('/', (req, res) => {
   res.send('🎉 Backend is working!');
 });
 
-// Route: Handle form submissions
+// Contact form route
 app.post('/contact', async (req, res) => {
   try {
     const { name, email, phone } = req.body;
-
-    console.log("Will try to save:", { name, email, phone });
+    console.log("📩 Received:", { name, email, phone });
 
     const newContact = new Contact({ name, email, phone });
     const saved = await newContact.save();
@@ -64,8 +60,6 @@ app.post('/contact', async (req, res) => {
     res.status(500).json({ error: 'Something went wrong!' });
   }
 });
-
-
 
 // Start the server
 app.listen(PORT, () => {
