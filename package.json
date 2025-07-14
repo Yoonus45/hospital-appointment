@@ -1,21 +1,18 @@
 {
   "name": "final-yr-project",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "Hospital appointment backend using Supabase",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Yoonus",
   "license": "ISC",
   "dependencies": {
+    "@supabase/supabase-js": "^2.39.4",
     "cors": "^2.8.5",
     "dotenv": "^17.0.1",
-    "express": "^5.1.0",
-    "mongodb": "^6.17.0",
-    "mongoose": "^8.16.1",
-    "nodemailer": "^7.0.4"
-  },
-  "description": ""
+    "express": "^5.1.0"
+  }
 }
