@@ -1,14 +1,21 @@
+// Load environment variables
 require('dotenv').config();
 
 // Import dependencies
 const express = require('express');
 const path = require('path');
-const mongoose = require('mongoose');
 const cors = require('cors');
+const { createClient } = require('@supabase/supabase-js');
 
 // Create Express app
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Create Supabase client
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY
+);
 
 // Enable CORS for frontend (e.g. Netlify)
 app.use(cors());
@@ -17,47 +24,34 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Serve static files (optional)
+// Serve static files (optional if using Netlify)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Connect to MongoDB Atlas using .env variable
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => {
-  console.log('✅ Connected to MongoDB');
-}).catch((err) => {
-  console.error('❌ MongoDB connection failed:', err);
-});
-
-// Define Mongoose schema and model
-const contactSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  message: String  
-});
-
-const Contact = mongoose.model('Contact', contactSchema);
-
-// Test route
+// Route: Home test
 app.get('/', (req, res) => {
-  res.send('🎉 Backend is working!');
+  res.send('🎉 Supabase backend is working!');
 });
 
-// Contact form route
+// Route: Handle contact form submissions
 app.post('/contact', async (req, res) => {
   try {
     const { name, email, phone } = req.body;
     console.log("📩 Received:", { name, email, phone });
 
-    const newContact = new Contact({ name, email, phone });
-    const saved = await newContact.save();
+    const { data, error } = await supabase
+      .from('contacts')  // ⚠️ Must match your table name in Supabase
+      .insert([{ name, email, phone }]);
 
-    console.log("✅ Saved to DB:", saved);
-    res.status(200).json({ message: 'Thank you! Your data was saved.' });
+    if (error) {
+      console.error('❌ Supabase error:', error.message);
+      return res.status(500).json({ error: 'Failed to save to Supabase.' });
+    }
+
+    console.log("✅ Saved to Supabase:", data);
+    res.status(200).json({ message: 'Form submitted successfully!' });
   } catch (err) {
-    console.error('❌ Error saving data:', err.message);
-    res.status(500).json({ error: 'Something went wrong!' });
+    console.error('❌ Server error:', err.message);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
