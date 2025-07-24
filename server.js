@@ -35,12 +35,12 @@ app.get('/', (req, res) => {
 // Route: Handle contact form submissions
 app.post('/contact', async (req, res) => {
   try {
-    const { name, email, phone } = req.body;
-    console.log("📩 Received:", { name, email, phone });
+    const { name, email, phone, message } = req.body;
+    console.log("📩 Received:", { name, email, phone, message });
 
     const { data, error } = await supabase
       .from('contacts')  // ⚠️ Must match your table name in Supabase
-      .insert([{ name, email, phone }]);
+      .insert([{ name, email, phone, message }]);
 
     if (error) {
       console.error('❌ Supabase error:', error.message);
