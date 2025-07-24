@@ -17,6 +17,7 @@ form.addEventListener('submit', async (e) => {
   const name = document.getElementById('name').value.trim();
   const email = document.getElementById('email').value.trim();
   const phone = document.getElementById('phone').value.trim();
+  const message = document.getElementById('message').value.trim();
 
   try {
     const res = await fetch('https://hospital-backend-lvd2.onrender.com', {
